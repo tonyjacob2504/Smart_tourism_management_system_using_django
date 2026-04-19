@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Add Accommodation</h6>
+            <h1 class="mb-5">Register New Accommodation</h1>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-8 shadow-sm border p-4 rounded-4 bg-white">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-image text-primary me-2"></i>Accommodation Image</label>
+                            {{ form.image }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-hotel text-primary me-2"></i>Accommodation Name</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-tag text-primary me-2"></i>Type</label>
+                            {{ form.type }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-phone text-primary me-2"></i>Phone Number</label>
+                            {{ form.phone_number }}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-envelope text-primary me-2"></i>Email Address</label>
+                            {{ form.email }}
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-map-marker-alt text-primary me-2"></i>Address</label>
+                            {{ form.address }}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-door-open text-primary me-2"></i>Total Rooms</label>
+                            {{ form.total_rooms }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-dollar-sign text-primary me-2"></i>Price/Night</label>
+                            {{ form.price_per_night }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-snowflake text-primary me-2"></i>Room Type</label>
+                            {{ form.room_type }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-clock text-primary me-2"></i>Check-in Time</label>
+                            {{ form.checkin }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-clock text-primary me-2"></i>Check-out Time</label>
+                            {{ form.checkout }}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold text-dark"><i
+                                    class="fa fa-lock text-primary me-2"></i>Management Password</label>
+                            {{ form.password }}
+                        </div>
+
+                        <div class="col-12 text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-5 py-3 rounded-pill fw-bold">
+                                <i class="fa fa-save me-2"></i>Add Accommodation
+                            </button>
+                            <a href="{% url 'manage_accommodation' %}"
+                                class="btn btn-outline-secondary px-5 py-3 rounded-pill ms-2">
+                                <i class="fa fa-times me-2"></i>Cancel
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

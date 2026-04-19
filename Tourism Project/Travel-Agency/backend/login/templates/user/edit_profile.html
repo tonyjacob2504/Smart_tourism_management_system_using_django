@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-xxl py-5">
+    <div class="container">
+        {% if messages %}
+        <div class="container mt-3 ">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center"
+                style="background-color:rgb(236, 10, 10); color: #fcf9f9; ">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3 ">Edit</h6>
+            <h1 class="mb-5">Edit Profile</h1>
+        </div>
+        <div class="row g-4">
+
+
+            <div class="col-lg-12 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+                <form method="Post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="file" class="form-control" id="image" name="image" value="{{user.profile}}"
+                                    placeholder="Your Name">
+                                <label for="profile">Choose Profile</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="name" name="name" value="{{user.fullname}}"
+                                    placeholder="Your Name">
+                                <label for="name">Your Full Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="email" name="email" value="{{user.email}}"
+                                    placeholder="Your Email" pattern="[a-z0-9._%+-]+@gmail\.com"
+                                    title="Please enter a valid gmail address in lowercase (e.g., example@gmail.com)">
+                                <label for="email">Your Email</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="tel" class="form-control" id="phone" name="phone" value="{{user.phone}}"
+                                    placeholder="Your Phone" pattern="[0-9]{10}" minlength="10" maxlength="10"
+                                    title="Please enter a 10-digit phone number">
+                                <label for="phone">Your Phone</label>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <textarea class="form-control" placeholder="Leave a message here" id="message"
+                                    name="address" style="height: 100px">{{user.address}}</textarea>
+                                <label for="message">Address</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <button class="btn btn-primary w-100 py-3" type="submit">Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                    <h6 class="section-title bg-white text-center text-primary px-3">Join Us</h6>
+                    <h1 class="mb-5">Register as a Guide</h1>
+                </div>
+                <div class="card shadow border-0 rounded-4 overflow-hidden wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="name" placeholder="Full Name"
+                                            required>
+                                        <label>Full Name</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" name="email"
+                                            placeholder="Email Address" required>
+                                        <label>Email Address</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="phone" placeholder="Phone Number"
+                                            required>
+                                        <label>Phone Number</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="location"
+                                            placeholder="Base Location" required>
+                                        <label>Base Location (City/State)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" name="languages"
+                                            placeholder="Languages (e.g. English, Hindi)" required>
+                                        <label>Languages Known</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" name="exp" placeholder="Experience"
+                                            required min="0">
+                                        <label>Years of Exp</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-floating">
+                                        <textarea class="form-control" name="address" style="height: 100px"
+                                            placeholder="Profile Bio/Address" required></textarea>
+                                        <label>Full Address / Bio</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="password" class="form-control" name="pass" placeholder="Password"
+                                            required>
+                                        <label>Password</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small text-muted">Profile Photo</label>
+                                    <input type="file" class="form-control" name="image" required accept="image/*">
+                                </div>
+                                <div class="col-12 text-center mt-5">
+                                    <button class="btn btn-primary rounded-pill px-5 py-3 shadow" type="submit">Submit
+                                        Registration</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .weather-card {
+        background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+        border-radius: 20px;
+        color: white;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(26, 115, 232, 0.3);
+    }
+
+    .weather-card .temp-big {
+        font-size: 4rem;
+        font-weight: 700;
+        line-height: 1;
+    }
+
+    .weather-card .weather-desc {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .weather-stat {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 12px;
+        padding: 12px 16px;
+        text-align: center;
+    }
+
+    .weather-stat .stat-value {
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .weather-stat .stat-label {
+        font-size: 0.75rem;
+        opacity: 0.8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .forecast-card {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 14px;
+        padding: 14px;
+        text-align: center;
+        flex: 1;
+    }
+
+    .forecast-card .f-temp {
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .forecast-card .f-date {
+        font-size: 0.78rem;
+        opacity: 0.85;
+        margin-bottom: 4px;
+    }
+
+    .forecast-card .f-desc {
+        font-size: 0.78rem;
+        opacity: 0.75;
+    }
+
+    .price-result-card {
+        background: linear-gradient(135deg, #00b09b, #096dd9);
+        border-radius: 20px;
+        color: white;
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 176, 155, 0.3);
+    }
+
+    .price-result-card .price-amount {
+        font-size: 3rem;
+        font-weight: 800;
+    }
+
+    .weather-icon-big {
+        font-size: 3.5rem;
+    }
+</style>
+
+<div class="container-xxl py-5">
+    <div class="container">
+
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s" style="margin-bottom: 40px;">
+            <h6 class="section-title bg-white text-center text-primary px-3">Smart Tools</h6>
+            <h1 class="mb-2">Trip Price &amp; Weather Predictor</h1>
+            <p class="text-muted">Get your estimated trip cost and live weather forecast for your destination</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+
+            <!-- Form -->
+            <div class="col-lg-6 col-md-10 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="card shadow-sm border-0 rounded-4 p-4">
+                    <h5 class="mb-4 text-primary"><i class="fa fa-calculator me-2"></i>Trip Details</h5>
+                    <form method="POST" action="{% url 'ml_test' %}" id="ml-form">
+                        {% csrf_token %}
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="location" id="location"
+                                        placeholder="Location" value="{{ location_input }}" required>
+                                    <label for="location"><i class="fa fa-map-marker-alt me-1 text-primary"></i>
+                                        Location</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" name="num_days" id="num_days"
+                                        placeholder="Number of Days" value="{{ num_days }}" required>
+                                    <label for="num_days">Number of Days</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" name="num_people" id="num_people"
+                                        placeholder="Number of People" value="{{ num_people }}" required>
+                                    <label for="num_people">Number of People</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" name="food_level" id="food_level">
+                                        <option value="Budget">Budget</option>
+                                        <option value="Standard">Standard</option>
+                                        <option value="Premium" selected>Premium</option>
+                                    </select>
+                                    <label for="food_level">Food Level</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" name="hotel_rating" id="hotel_rating"
+                                        placeholder="Hotel Rating" value="{{ hotel_rating }}" min="1" max="5" required>
+                                    <label for="hotel_rating">Hotel Rating (1-5)</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" name="guide_support" id="guide_support">
+                                        <option value="Yes" selected>Yes</option>
+                                        <option value="No">No</option>
+                                    </select>
+                                    <label for="guide_support">Guide Support</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" name="transport_type" id="transport_type">
+                                        <option value="Bus">Bus</option>
+                                        <option value="Train">Train</option>
+                                        <option value="Flight" selected>Flight</option>
+                                        <option value="Car">Car</option>
+                                    </select>
+                                    <label for="transport_type">Transport Type</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" name="season" id="season">
+                                        <option value="Off-Peak">Off-Peak</option>
+                                        <option value="Shoulder">Shoulder</option>
+                                        <option value="Peak" selected>Peak</option>
+                                    </select>
+                                    <label for="season">Season</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" name="distance_km" id="distance_km"
+                                        placeholder="Distance (km)" value="{{ distance_km }}" required>
+                                    <label for="distance_km">Distance (km)</label>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" name="activities_count"
+                                        id="activities_count" placeholder="Activities Count"
+                                        value="{{ activities_count }}" required>
+                                    <label for="activities_count">Activities Count</label>
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-2">
+                                <button class="btn btn-primary w-100 py-3 rounded-pill fw-bold" type="submit"
+                                    id="predict-btn">
+                                    <i class="fa fa-magic me-2"></i> Predict Price &amp; Weather
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="col-lg-6 col-md-10 wow fadeInUp" data-wow-delay="0.2s">
+
+                {% if predicted_price %}
+                <div class="price-result-card mb-4">
+                     <div class="price-amount">&#8377; {{ predicted_price }}</div>
+                    <div class="mt-2" style="opacity:0.85;">Estimated Total Trip Cost</div>
+                    <div class="mt-1" style="font-size:0.85rem; opacity:0.7;">Based on {{ location_input }} trip
+                        parameters</div>
+                </div>
+                {% endif %}
+
+                {% if error %}
+                <div class="alert alert-danger rounded-4 mb-4">
+                    <i class="fa fa-exclamation-triangle me-2"></i>{{ error }}
+                </div>
+                {% endif %}
+
+                {% if weather %}
+                <div class="weather-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <div style="font-size:0.85rem; opacity:0.8;"><i class="fa fa-map-marker-alt me-1"></i> 
+                            {{weather.location }}</div>
+                            <div class="temp-big mt-1">{{ weather.temp_c }}&#176;C</div>
+                            <div class="weather-desc">{{ weather.description }}</div>
+                            <div style="font-size:0.85rem; opacity:0.75; margin-top:4px;">Feels like 
+                            {{weather.feels_like }}&#176;C</div>
+                        </div>
+                        <div class="weather-icon-big">{{ weather.icon }}</div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-3">
+                            <div class="weather-stat">
+                                <div class="stat-value">{{ weather.humidity }}%</div>
+                                <div class="stat-label">Humidity</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="weather-stat">
+                                <div class="stat-value">{{ weather.wind_kmph }}</div>
+                                <div class="stat-label">Wind km/h</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="weather-stat">
+                                <div class="stat-value">{{ weather.visibility }}</div>
+                                <div class="stat-label">Visibility</div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="weather-stat">
+                                <div class="stat-value">{{ weather.uv_index }}</div>
+                                <div class="stat-label">UV Index</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        style="font-size:0.8rem; opacity:0.75; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">
+                        3-Day Forecast</div>
+                    <div class="d-flex gap-2">
+                        {% for day in weather.forecast %}
+                        <div class="forecast-card">
+                            <div class="f-date">{{ day.date }}</div>
+                            <div style="font-size:1.4rem;">{{ day.icon }}</div>
+                            <div class="f-temp">{{ day.max_c }}&#176; / {{ day.min_c }}&#176;</div>
+                            <div class="f-desc">{{ day.desc }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                {% else %}
+                <div class="card border-0 rounded-4 shadow-sm text-center p-5" style="background: #f0f4ff;">
+                    <div style="font-size:5rem;">&#127757;</div>
+                    <h5 class="mt-3 text-muted">Weather &amp; Price will appear here</h5>
+                    <p class="text-muted" style="font-size:0.9rem;">Enter your destination and trip details,<br>then
+                        click <strong>Predict</strong>.</p>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

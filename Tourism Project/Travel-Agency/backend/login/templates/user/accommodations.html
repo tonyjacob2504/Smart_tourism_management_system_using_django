@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Explore Accommodations</h6>
+            <h1 class="mb-5">Our Partner Hotels</h1>
+        </div>
+
+        <div class="row g-4">
+            {% for accommodation in accommodations %}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="package-item bg-white border h-100 rounded">
+                    <div class="overflow-hidden" style="height: 250px;">
+                        {% if accommodation.image %}
+                        <img class="img-fluid w-100 h-100" src="{{ accommodation.image.url }}"
+                            alt="{{ accommodation.name }}" style="object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center h-100 w-100">
+                            <i class="fa fa-hotel fa-4x text-muted opacity-25"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="p-4">
+                        <div class="d-flex justify-content-between mb-3 border-bottom pb-2">
+                            <h4 class="m-0 fw-bold text-dark">{{ accommodation.name }}</h4>
+                            <div class="text-end">
+                                <span class="badge bg-primary px-3 py-2 rounded-pill d-inline-block mb-1">{{accommodation.type }}</span>
+                                <span class="badge bg-info text-dark px-3 py-2 rounded-pill d-inline-block mb-1">{{accommodation.room_type }}</span>
+                                <h5 class="text-primary m-0 fw-bold">₹{{ accommodation.price_per_night }}<small
+                                        class="text-muted" style="font-size: 0.6rem;">/night</small></h5>
+                            </div>
+                        </div>
+                        <p class="mb-3 text-muted"><i
+                                class="fa fa-map-marker-alt text-primary me-2"></i>{{accommodation.address }}</p>
+
+                        <div class="row g-2 mb-4">
+                            <div class="col-6">
+                                <small class="text-uppercase text-muted d-block small mb-1">Check-in</small>
+                                <span class="fw-bold"><i
+                                        class="fa fa-clock text-primary me-2"></i>{{accommodation.checkin }}</span>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-uppercase text-muted d-block small mb-1">Check-out</small>
+                                <span class="fw-bold"><i
+                                        class="fa fa-clock text-primary me-2"></i>{{accommodation.checkout }}</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <small class="text-muted d-block">Available Rooms</small>
+                                <span class="fw-bold text-primary fs-5">{{ accommodation.total_rooms }} Rooms</span>
+                            </div>
+                            <div class="d-flex">
+                                <a href="{% url 'hotel_detail' accommodation.id %}"
+                                    class="btn btn-outline-primary rounded-pill px-3 me-2"
+                                    title="View Details & Reviews">
+                                    <i class="fa fa-info-circle"></i>
+                                </a>
+                                <a href="tel:{{ accommodation.phone_number }}"
+                                    class="btn btn-outline-primary rounded-pill px-3 me-2">
+                                    <i class="fa fa-phone-alt"></i>
+                                </a>
+                                <a href="{% url 'hotel_payment' accommodation.id %}"
+                                    class="btn btn-primary rounded-pill px-4">
+                                    Book Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="fa fa-hotel fa-4x text-muted mb-3 opacity-25"></i>
+                <h3 class="text-muted">No hotels available at the moment.</h3>
+                <p class="text-muted">Stay tuned for amazing updates!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                        <h1 class="display-6 m-0 text-primary fw-bold">Add New Destination</h1>
+                        <a href="{% url 'manage_destinations' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="fa fa-arrow-left me-2"></i>Back
+                        </a>
+                    </div>
+                </div>
+
+                <div class="card shadow rounded-4 border-0 mb-5 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row g-4">
+                                <!-- Name -->
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold text-dark"><i
+                                            class="fa fa-tag text-primary me-2"></i>Destination Name</label>
+                                    {{ form.name }}
+                                </div>
+
+                                <!-- Image -->
+                                <div class="col-md-12">
+                                    <label class="form-label fw-bold text-dark"><i
+                                            class="fa fa-image text-primary me-2"></i>Destination Image</label>
+                                    <div class="p-4 border rounded-3 text-center bg-light">
+                                        <i class="fa fa-cloud-upload-alt fa-3x text-primary mb-3 opacity-25"></i>
+                                        {{ form.image }}
+                                        <p class="small text-muted mt-2 mb-0">Drag and drop or click to upload
+                                            high-quality landscape photo.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Description -->
+                                <div class="col-12">
+                                    <label class="form-label fw-bold text-dark"><i
+                                            class="fa fa-quote-left text-primary me-2 text-primary me-2"></i>Short
+                                        Description</label>
+                                    {{ form.description }}
+                                </div>
+
+                                <!-- State & City -->
+                                <div class="col-md-6 text-primary me-2">
+                                    <label class="form-label fw-bold text-dark"><i
+                                            class="fa fa-map-marker-alt text-primary me-2"></i>City</label>
+                                    {{ form.city }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-dark"><i
+                                            class="fa fa-map text-primary me-2"></i>State</label>
+                                    {{ form.state }}
+                                </div>
+
+                                <!-- Season & Entry Fee -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-dark"><i
+                                            class="fa fa-calendar-alt text-primary me-2"></i>Best Season to
+                                        Visit</label>
+                                    {{ form.best_season }}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold text-dark"><i
+                                            class="fa fa-money-bill-wave text-primary me-2"></i>Entry Fees (₹)</label>
+                                    {{ form.entry_fees }}
+                                </div>
+
+                                <div class="col-12 text-center mt-5 pt-3">
+                                    <button type="submit"
+                                        class="btn btn-primary px-5 py-3 rounded-pill fw-bold shadow-lg">
+                                        <i class="fa fa-save me-2 text-primary me-2"></i>Save Destination
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

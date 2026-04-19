@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Package Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Booking</h6>
+            <h1 class="mb-5">View Your Bookings</h1>
+        </div>
+
+
+        <div class="row g-4 justify-content-center">
+            {% if result %}
+            {% for i in result %}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="package-item h-100 shadow-sm">
+                    <div class="overflow-hidden" style="height: 200px;">
+                        <img class="img-fluid w-100 h-100" src="{{ i.package.image.url }}" alt=""
+                            style="object-fit: cover;">
+                    </div>
+                    <div class="d-flex border-bottom">
+                        <small class="flex-fill text-center border-end py-2"><i
+                                class="fa fa-map-marker-alt text-primary me-2"></i>{{ i.package.place }}</small>
+                        <small class="flex-fill text-center border-end py-2"><i
+                                class="fa fa-calendar-alt text-primary me-2"></i>{{ i.package.days }} days</small>
+                        <small class="flex-fill text-center py-2"><i
+                                class="fa fa-info-circle text-primary me-2"></i>{{i.status }}</small>
+                    </div>
+                    <div class="text-center p-4">
+                        <h4 class="mb-3">Package: {{ i.package.place }}</h4>
+                        <div class="financials mb-3 p-2 bg-light rounded shadow-sm border">
+                            <h6 class="text-dark mb-1 small fw-bold">Total: ₹{{ i.total_price }}</h6>
+                            <div class="d-flex justify-content-between small px-2">
+                                <span class="text-success">Paid (Adv): ₹{{ i.advance_paid }}</span>
+                                <span class="text-danger">Balance: ₹{{ i.balance_amount }}</span>
+                            </div>
+                        </div>
+                        <p class="small mb-1">Date: {{ i.vacation_date }} | Persons: {{ i.num_persons }}</p>
+                        {% if i.guide %}
+                        <p class="small mb-1 text-primary"><i class="fa fa-user-tie me-1"></i>Guide: {{i.guide.fullname|default:i.guide.email }}</p>
+                        {% endif %}
+                        {% if i.hotel %}
+                        <p class="small mb-0 text-success"><i class="fa fa-hotel me-1"></i>Hotel: {{ i.hotel.name }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if hotel_bookings %}
+            {% for hb in hotel_bookings %}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.2s">
+                <div class="package-item h-100 shadow-sm border-primary border">
+                    <div class="overflow-hidden" style="height: 200px;">
+                        {% if hb.hotel.image %}
+                        <img class="img-fluid w-100 h-100" src="{{ hb.hotel.image.url }}" alt=""
+                            style="object-fit: cover;">
+                        {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center h-100 w-100">
+                            <i class="fa fa-hotel fa-4x text-muted opacity-25"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex border-bottom bg-light">
+                        <small class="flex-fill text-center border-end py-2"><i
+                                class="fa fa-hotel text-primary me-2"></i>{{ hb.hotel.name }}</small>
+                        <small class="flex-fill text-center py-2"><i
+                                class="fa fa-calendar-check text-primary me-2"></i>{{ hb.status }}</small>
+                    </div>
+                    <div class="text-center p-4">
+                        <h4 class="mb-3">{{ hb.hotel.name }}</h4>
+                        <h5 class="mb-2 text-success">Total: ₹{{ hb.total_amount }}</h5>
+                        <div class="small text-muted mb-2">
+                            <span>In: {{ hb.check_in_date }}</span> | <span>Out: {{ hb.check_out_date }}</span>
+                        </div>
+                        <p class="small mb-0">{{ hb.num_rooms }} Rooms Booked</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if not result and not hotel_bookings %}
+            <div class="col-12 text-center py-5">
+                <i class="fa fa-calendar-times fa-4x text-muted mb-3 opacity-25"></i>
+                <h4>No Bookings Found</h4>
+                <a href="{% url 'home' %}" class="btn btn-primary rounded-pill mt-3 px-4">Find Your Next Trip</a>
+            </div>
+            {% endif %}
+        </div>
+
+
+
+
+    </div>
+</div>
+</div>
+<!-- Package End -->
+
+{% endblock %}

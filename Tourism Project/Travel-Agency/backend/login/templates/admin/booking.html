@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Agency Management</h6>
+            <h1 class="mb-5">User Bookings</h1>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover shadow-sm align-middle">
+                <thead class="bg-primary text-white text-center">
+                    <tr>
+                        <th>#</th>
+                        <th>Package</th>
+                        <th>Traveler Details</th>
+                        <th>Vacation Date</th>
+                        <th>Amount</th>
+                        <th>Booking Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody class="text-center">
+                    {% if result %}
+                    {% for i in result %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td class="text-start">
+                            <div class="d-flex align-items-center">
+                                <img src="{% if i.package.image %}{{ i.package.image.url }}{% else %}{% static 'img/package-1.jpg' %}{% endif %}"
+                                    class="img-fluid rounded me-3"
+                                    style="width: 80px; height: 50px; object-fit: cover;">
+                                <div>
+                                    <h6 class="mb-0">{{ i.package.place }}</h6>
+                                    <small class="text-muted">{{ i.package.days }} Days / {{ i.package.person }}
+                                        Persons</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-start">
+                            <h6 class="mb-0">{{ i.user.fullname }}</h6>
+                            <small class="text-muted"><i class="fa fa-phone me-1"></i>{{ i.user.phone }}</small><br>
+                            <small class="text-muted"><i class="fa fa-envelope me-1"></i>{{ i.user.email }}</small>
+                        </td>
+                        <td>
+                            <div class="fw-bold">{{ i.vacation_date }}</div>
+                            <small class="text-muted">Booked on: {{ i.created_at|date:"M d, Y" }}</small>
+                        </td>
+                        <td><span class="fw-bold text-primary">₹{{ i.package.price }}</span></td>
+                        <td>
+                            <span
+                                class="badge {% if i.status == 'Booked' %}bg-success{% else %}bg-warning{% endif %} px-3 py-2">
+                                {{ i.status|upper }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{% url 'user_chat' i.user.id %}"
+                                class="btn btn-primary btn-sm rounded-pill px-3 shadow-sm">
+                                <i class="fa fa-comments me-1"></i> Chat
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="py-5">
+                            <div class="text-center">
+                                <i class="fa fa-calendar-times fa-3x text-light mb-3"></i>
+                                <h4 class="text-muted">No Bookings Found</h4>
+                                <p class="text-muted">When users book your packages, they will appear here.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+{% endblock %}

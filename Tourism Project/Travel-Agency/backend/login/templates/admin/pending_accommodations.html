@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Pending Approvals</h6>
+            <h1 class="mb-5">Hotel Registration Requests</h1>
+        </div>
+
+        <div class="d-flex justify-content-start mb-4">
+            <a href="{% url 'manage_accommodation' %}" class="btn btn-outline-primary px-4 py-2 rounded-pill">
+                <i class="fa fa-arrow-left me-2"></i>Back to List
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-warning text-dark">
+                                    <tr>
+                                        <th class="py-3 px-4">Image</th>
+                                        <th class="py-3">Name</th>
+                                        <th class="py-3">Type</th>
+                                        <th class="py-3">Phone</th>
+                                        <th class="py-3">Email</th>
+                                        <th class="py-3">Address</th>
+                                        <th class="py-3 px-4 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for accommodation in accommodations %}
+                                    <tr>
+                                        <td class="py-3 px-4">
+                                            {% if accommodation.image %}
+                                            <img src="{{ accommodation.image.url }}" alt="{{ accommodation.name }}"
+                                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                            {% else %}
+                                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                                style="width: 50px; height: 50px; border-radius: 5px;">
+                                                <i class="fa fa-hotel text-muted"></i>
+                                            </div>
+                                            {% endif %}
+                                        </td>
+                                        <td class="py-3 fw-bold text-dark">{{ accommodation.name }}</td>
+                                        <td class="py-3">{{ accommodation.type }}</td>
+                                        <td class="py-3">{{ accommodation.phone_number }}</td>
+                                        <td class="py-3">{{ accommodation.email }}</td>
+                                        <td class="py-3"
+                                            style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                            {{ accommodation.address }}</td>
+                                        <td class="py-3 px-4 text-center">
+                                            <a href="{% url 'approve_accommodation' accommodation.id %}"
+                                                class="btn btn-sm btn-success rounded-pill px-3 me-2">
+                                                <i class="fa fa-check me-1"></i>Accept
+                                            </a>
+                                            <a href="{% url 'reject_accommodation' accommodation.id %}"
+                                                class="btn btn-sm btn-danger rounded-pill px-3"
+                                                onclick="return confirm('Are you sure you want to reject this registration?')">
+                                                <i class="fa fa-times me-1"></i>Reject
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="7" class="text-center py-5 text-muted">
+                                            <i class="fa fa-check-circle fa-3x mb-3 d-block"></i>
+                                            All registration requests have been processed.
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

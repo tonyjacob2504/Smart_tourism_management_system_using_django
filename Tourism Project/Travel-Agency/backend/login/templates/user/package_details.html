@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s" style="min-height: 400px;">
+                <div class="position-relative h-100">
+                    <img class="img-fluid position-absolute w-100 h-100"
+                        src="{% if package.image %}{{ package.image.url }}{% else %}{% static 'img/about.jpg' %}{% endif %}"
+                        alt="" style="object-fit: cover;">
+                </div>
+            </div>
+            <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
+                <h6 class="section-title bg-white text-start text-primary pe-3">Package Details</h6>
+                <h1 class="mb-4">Welcome to <span class="text-primary">{{ package.place }}</span></h1>
+
+                <div class="row gy-2 gx-4 mb-4">
+                    <div class="col-sm-6">
+                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Duration: {{ package.days }}
+                            Days</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Price: ₹{{ package.price }}
+                        </p>
+                    </div>
+                    {% if package.person %}
+                    <div class="col-sm-6">
+                        <p class="mb-0"><i class="fa fa-arrow-right text-primary me-2"></i>Persons: {{ package.person }}
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if package.coordinator.role == 'coordinator' %}
+                <div class="bg-light p-4 rounded mb-4">
+                    <h4 class="mb-3">Agency Information</h4>
+                    <p class="mb-2"><i class="fa fa-building text-primary me-2"></i><strong>Agency Name:</strong>
+                        {{ package.coordinator.fullname|default:"N/A" }}</p>
+                    <p class="mb-2"><i class="fa fa-envelope text-primary me-2"></i><strong>Email:</strong>
+                        {{ package.coordinator.email|default:"N/A" }}</p>
+                    <p class="mb-2"><i class="fa fa-phone text-primary me-2"></i><strong>Contact:</strong>
+                        {{ package.coordinator.phone|default:"N/A" }}</p>
+                    <p class="mb-0"><i class="fa fa-map-marker-alt text-primary me-2"></i><strong>Address:</strong>
+                        {{ package.coordinator.address|default:"N/A" }}</p>
+                </div>
+                {% else %}
+                <div class="bg-light p-4 rounded mb-4">
+                    <h4 class="mb-3">About {{ package.place }}</h4>
+                    <p class="mb-2"><i class="fa fa-phone text-primary me-2"></i><strong>Contact:</strong> 1800-123-4567
+                    </p>
+                    <p class="mb-0"><i class="fa fa-info-circle text-primary me-2"></i>
+                        Discover the wonders of {{ package.place }} — a perfect blend of culture, adventure, and
+                        unforgettable experiences awaiting you.
+                    </p>
+                </div>
+                {% endif %}
+
+                {% if request.user.is_authenticated and request.user.role == "user" %}
+                <a class="btn btn-primary py-3 px-5 mt-2" href="{% url 'payment' package.id %}">Book Now</a>
+                <a class="btn btn-secondary py-3 px-5 mt-2 ms-2" href="{% url 'user_package' %}">Back to Packages</a>
+                {% else %}
+                <a class="btn btn-secondary py-3 px-5 mt-2" href="javascript:history.back()">Back</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

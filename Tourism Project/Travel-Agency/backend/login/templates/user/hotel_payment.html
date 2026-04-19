@@ -1,0 +1,287 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Secure Booking</h6>
+            <h1 class="mb-5">Complete Your Hotel Reservation</h1>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <!-- Sidebar: Hotel Info -->
+            <div class="col-lg-5 col-md-6 order-md-2 mb-4">
+                <div class="card shadow border-0 rounded-4 overflow-hidden sticky-top" style="top: 100px;">
+                    <img src="{% if hotel.image %}{{ hotel.image.url }}{% else %}{% static 'img/hotel-placeholder.jpg' %}{% endif %}"
+                        class="card-img-top" style="height: 200px; object-fit: cover;">
+                    <div class="card-body p-4 bg-light">
+                        <h4 class="fw-bold mb-3">{{ hotel.name }}</h4>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Price per Night</span>
+                            <span class="fw-bold text-primary">₹{{ hotel.price_per_night }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Type</span>
+                            <span class="badge bg-secondary">{{ hotel.type }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Room Category</span>
+                            <span class="badge bg-info text-dark">{{ hotel.room_type }}</span>
+                        </div>
+                        <p class="small text-muted mb-0 mt-3"><i class="fa fa-map-marker-alt me-2"></i>{{hotel.address}}
+                        </p>
+                    </div>
+                    <div class="card-footer bg-primary text-white p-4 border-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="m-0">Estimated Total</h5>
+                            <h3 class="m-0 text-white" id="live_total">₹{{ hotel.price_per_night }}</h3>
+                        </div>
+                        <small class="opacity-75">Final price may vary based on nights selection.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Form: Steps -->
+            <div class="col-lg-7 col-md-6 order-md-1">
+                <div class="bg-white shadow p-4 rounded-4 border">
+                    <form method="post" id="paymentForm">
+                        {% csrf_token %}
+
+                        <!-- Step 1: Stay Details -->
+                        <h5 class="mb-4 d-flex align-items-center"><span
+                                class="badge bg-primary rounded-circle me-2">1</span> Stay Details</h5>
+                        <div class="row g-3 mb-5 border-bottom pb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Check-in Date</label>
+                                <input type="date" name="check_in" id="check_in" class="form-control" required
+                                    min="{{ today|date:'Y-m-d' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Check-out Date</label>
+                                <input type="date" name="check_out" id="check_out" class="form-control" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold small text-muted text-uppercase">Number of
+                                    Rooms</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa fa-door-open"></i></span>
+                                    <input type="number" name="num_rooms" id="num_rooms" class="form-control" value="1"
+                                        min="1" max="{{ hotel.total_rooms }}">
+                                </div>
+                                <small class="text-muted">{{ hotel.total_rooms }} rooms available in total.</small>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Payment Method -->
+                        <h5 class="mb-4 d-flex align-items-center"><span
+                                class="badge bg-primary rounded-circle me-2">2</span> Choose Payment Method</h5>
+
+                        <!-- Payment Tabs -->
+                        <ul class="nav nav-pills mb-4 bg-light p-2 rounded-pill justify-content-center" id="paymentTabs"
+                            role="tablist">
+                            <li class="nav-item flex-fill text-center" role="presentation">
+                                <button class="nav-link active rounded-pill w-100" data-bs-toggle="pill"
+                                    data-bs-target="#cardTab" type="button" role="tab"><i
+                                        class="fa fa-credit-card me-2"></i>Card</button>
+                            </li>
+                            <li class="nav-item flex-fill text-center" role="presentation">
+                                <button class="nav-link rounded-pill w-100" data-bs-toggle="pill"
+                                    data-bs-target="#upiTab" type="button" role="tab"><i
+                                        class="fa fa-mobile-alt me-2"></i>UPI</button>
+                            </li>
+                            <li class="nav-item flex-fill text-center" role="presentation">
+                                <button class="nav-link rounded-pill w-100" data-bs-toggle="pill"
+                                    data-bs-target="#netTab" type="button" role="tab"><i
+                                        class="fa fa-university me-2"></i>Net Banking</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="paymentTabsContent">
+                            <!-- Card Payment -->
+                            <div class="tab-pane fade show active" id="cardTab" role="tabpanel">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold small text-muted">CARD HOLDER NAME</label>
+                                        <input type="text" name="c_name" class="form-control card-field"
+                                            placeholder="Name as on card" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold small text-muted">CARD NUMBER</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text text-primary"><i
+                                                    class="fa fa-credit-card"></i></span>
+                                            <input type="text" name="c_number" class="form-control card-field"
+                                                placeholder="XXXX XXXX XXXX XXXX" required maxlength="16">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small text-muted">EXPIRY DATE</label>
+                                        <input type="text" class="form-control card-field" placeholder="MM/YY" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold small text-muted">CVV</label>
+                                        <input type="password" class="form-control card-field" placeholder="***"
+                                            required maxlength="3">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- UPI Payment -->
+                            <div class="tab-pane fade text-center py-3" id="upiTab" role="tabpanel">
+                                <div class="mb-4">
+                                    <div class="p-3 bg-light rounded d-inline-block border">
+                                        <!-- Placeholder QR generated by CSS/HTML -->
+                                        <div style="width: 150px; height: 150px; background: white; padding: 10px;"
+                                            class="mx-auto border">
+                                            <i class="fa fa-qrcode fa-8x text-dark"></i>
+                                        </div>
+                                        <p class="mt-2 mb-0 small text-uppercase fw-bold text-muted">Scan with Any UPI
+                                            App</p>
+                                    </div>
+                                </div>
+                                <p class="text-muted">OR ENTER UPI ID</p>
+                                <div class="col-md-8 mx-auto mb-3">
+                                    <input type="text" class="form-control text-center upi-field"
+                                        placeholder="example@upi">
+                                </div>
+                                <div class="d-flex justify-content-center gap-4 align-items-center">
+
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/71/PhonePe_Logo.svg"
+                                        width="75" class="opacity-75">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Paytm_Logo_%28standalone%29.svg"
+                                        width="55" class="opacity-75">
+                                </div>
+                            </div>
+
+                            <!-- Net Banking -->
+                            <div class="tab-pane fade" id="netTab" role="tabpanel">
+                                <label class="form-label fw-bold small text-muted">SELECT YOUR BANK</label>
+                                <div class="row g-2">
+                                    <div class="col-6 col-md-4">
+                                        <div class="border rounded p-3 text-center bank-item cursor-pointer">
+                                            <i class="fa fa-university text-primary mb-2"></i>
+                                            <div class="small fw-bold">SBI</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="border rounded p-3 text-center bank-item cursor-pointer">
+                                            <i class="fa fa-university text-primary mb-2"></i>
+                                            <div class="small fw-bold">HDFC</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="border rounded p-3 text-center bank-item cursor-pointer">
+                                            <i class="fa fa-university text-primary mb-2"></i>
+                                            <div class="small fw-bold">ICICI</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="border rounded p-3 text-center bank-item cursor-pointer">
+                                            <i class="fa fa-university text-primary mb-2"></i>
+                                            <div class="small fw-bold">Axis</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="border rounded p-3 text-center bank-item cursor-pointer">
+                                            <i class="fa fa-university text-primary mb-2"></i>
+                                            <div class="small fw-bold">KOTAK</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-4">
+                                        <div class="border rounded p-3 text-center bank-item cursor-pointer">
+                                            <i class="fa fa-university text-primary mb-2"></i>
+                                            <div class="small fw-bold">BOB</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-5">
+                            <button type="submit" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow">
+                                <i class="fa fa-lock me-2"></i>Pay ₹<span
+                                    id="btn_total">{{hotel.price_per_night}}</span> & Confirm Booking
+                            </button>
+                            <div
+                                class="text-center mt-3 d-flex justify-content-center align-items-center gap-3 text-muted small">
+                                <span><i class="fa fa-shield-alt text-success me-1"></i>Secure Gateway</span>
+                                <span>|</span>
+                                <span><i class="fa fa-bolt text-warning me-1"></i>Instant Confirmation</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .sticky-top {
+        transition: all 0.3s ease;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .bank-item:hover {
+        background: #f8f9fa;
+        border-color: #0d6efd !important;
+    }
+
+    .nav-pills .nav-link {
+        color: #666;
+        font-weight: 600;
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: #0d6efd !important;
+    }
+</style>
+
+<script>
+    const pricePerNight = {{ hotel.price_per_night }};
+    const checkIn = document.getElementById('check_in');
+    const checkOut = document.getElementById('check_out');
+    const numRooms = document.getElementById('num_rooms');
+    const totalDisplay = document.getElementById('live_total');
+    const btnTotal = document.getElementById('btn_total');
+    const paymentTabs = document.getElementById('paymentTabs');
+    const cardFields = document.querySelectorAll('.card-field');
+
+    function updateTotal() {
+        if (checkIn.value && checkOut.value) {
+            const d1 = new Date(checkIn.value);
+            const d2 = new Date(checkOut.value);
+            const timeDiff = d2.getTime() - d1.getTime();
+            let nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            if (nights < 1) nights = 1;
+
+            const total = pricePerNight * nights * parseInt(numRooms.value || 1);
+            const formattedTotal = total.toLocaleString('en-IN');
+            totalDisplay.innerText = '₹' + formattedTotal;
+            btnTotal.innerText = formattedTotal;
+        }
+    }
+
+    checkIn.addEventListener('change', updateTotal);
+    checkOut.addEventListener('change', updateTotal);
+    numRooms.addEventListener('input', updateTotal);
+
+    checkIn.addEventListener('change', () => { checkOut.min = checkIn.value; });
+
+    // Handle Tab switching (remove 'required' from non-active tabs)
+    paymentTabs.addEventListener('shown.bs.tab', function (event) {
+        const activeTabId = event.target.getAttribute('data-bs-target');
+        if (activeTabId === '#cardTab') {
+            cardFields.forEach(f => f.setAttribute('required', ''));
+        } else {
+            cardFields.forEach(f => f.removeAttribute('required'));
+        }
+    });
+
+</script>
+{% endblock %}

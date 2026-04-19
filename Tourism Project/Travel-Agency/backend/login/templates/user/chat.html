@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Package Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Chat</h6>
+            <h1 class="mb-5"> </h1>
+        </div>
+        
+
+        
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-12 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="chat-container">
+                    <h3 class="chat-title">Chat with {{ receiver }}</h3>
+                    <div id="chat-box" class="chat-box">
+                        {% for message in messages %}
+                            <div class="message {% if message.sender == user %}sent{% else %}received{% endif %}">
+                                <p class="message-content"><strong>{{ message.sender.fullname }}</strong>: 
+                                    {% if message.message %}
+                                        {{ message.message }}
+                                    {% endif %}
+                                    
+                                </p>
+                                <span class="message-time">{{ message.timestamp|date:"H:i" }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Chat form -->
+                    <form method="POST" id="chat-form" class="chat-form">
+                        {% csrf_token %}
+                        <textarea name="message" class="message-input" placeholder="Type your message here..."></textarea>
+                        <button type="submit" class="send-button">Send</button>
+                    </form>
+                </div>
+                
+            </div>
+
+
+            
+        </div>
+    </div>
+</div>
+<!-- Package End -->
+
+{% endblock %}

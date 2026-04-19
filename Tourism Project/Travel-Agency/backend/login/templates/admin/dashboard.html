@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        {% if messages %}
+            <div class="container mt-3 ">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} text-center" style="background-color:rgb(236, 10, 10); color: #fcf9f9; ">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        <div class="text-center">
+            <h6 class="section-title bg-white text-center text-primary px-3">Clients</h6>
+            <h1 class="mb-5">Our Clients</h1>
+        </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Address</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for i in result %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{i.fullname}}</td>
+                    <td>{{i.email}}</td>
+                    <td>{{i.phone}}</td>
+                    <td>{{i.address}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+    </div>
+</div>
+
+{% endblock %}

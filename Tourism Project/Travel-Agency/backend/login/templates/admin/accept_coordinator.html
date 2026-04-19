@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="text-center">
+            <h6 class="section-title bg-white text-center text-primary px-3">Agency's</h6>
+            <h1 class="mb-5">Our Agency's</h1>
+        </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Agency Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for i in result %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{i.fullname}}</td>
+                    <td>{{i.email}}</td>
+                    <td>{{i.phone}}</td>
+                    <td>{{i.address}}</td>
+                    <td><a href="{% url 'accept' i.id %}" class="btn btn-success">Accept</a>
+                    <a href="{% url 'reject' i.id %}" class="btn btn-danger">Reject</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% comment %} <div class="d-flex justify-content-end align-items-center border-top-table p-3">
+                <a href="{% url 'add_coordinator' %}" class="btn btn-primary btn-sm">Add Coordinator</a>
+            </div> {% endcomment %}
+    </div>
+</div>
+
+{% endblock %}

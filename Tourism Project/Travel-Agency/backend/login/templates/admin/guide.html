@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="text-center">
+            <h6 class="section-title bg-white text-center text-primary px-3">Guide</h6>
+            <h1 class="mb-5">Our Guides</h1>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Full Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Languages</th>
+                    <th scope="col">Exp</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in result %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{i.fullname}}</td>
+                    <td>{{i.email}}</td>
+                    <td>{{i.phone}}</td>
+                    <td>{{i.location}}</td>
+                    <td>{{i.languages}}</td>
+                    <td>{{i.years_of_experience}}Y</td>
+                    <td>
+                        {% if i.status == 'Accepted' %}
+                        <span class="badge bg-success">Accepted</span>
+                        {% elif i.status == 'Rejected' %}
+                        <span class="badge bg-danger">Rejected</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark"></span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            {% if i.status != 'Accepted' %}
+                            <a href="{% url 'accept_guide' i.id %}" ></a>
+                            {% endif %}
+                            {% if i.status != 'Rejected' %}
+                            <a href="{% url 'reject_guide' i.id %}" ></a>
+                            {% endif %}
+                            <a href="{% url 'delete_guide' i.id %}" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Are you sure you want to delete this guide?')">Delete</a>
+                        </div>
+                    </td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if request.user.is_superuser %}
+        <div class="d-flex justify-content-end align-items-center border-top-table p-3">
+            <a href="{% url 'add_guide' %}" class="btn btn-primary btn-sm">Add Guide</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

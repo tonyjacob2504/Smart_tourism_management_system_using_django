@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Package Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Packages</h6>
+            <h1 class="mb-3">Awesome Packages</h1>
+            <a href="{% url 'ml_test' %}" class="btn btn-primary rounded-pill py-2 px-4 mb-5">
+                <i class="fa fa-calculator me-2"></i> Predict Your Trip Price
+            </a>
+        </div>
+        {% if request.user.role == "coordinator" %}
+        <div class="d-flex justify-content-start align-items-center border-top-table p-3 mb-2">
+            <a href="{% url 'add_package' %}" class="btn btn-primary btn-sm">Add Packages</a>
+        </div>
+        {% endif %}
+
+
+        <div class="row g-4 justify-content-center">
+            {% for package in packages %}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="package-item">
+                    <div class="overflow-hidden">
+                        <img class="img-fluid"
+                            src="{% if package.image %}{{ package.image.url }}{% else %}{% static 'img/package-1.jpg' %}{% endif %}"
+                            alt="">
+                    </div>
+
+                    <div class="d-flex border-bottom">
+                        <small class="flex-fill text-center border-end py-2"><i
+                                class="fa fa-map-marker-alt text-primary me-2"></i>{{ package.place }}</small>
+                        <!-- <small class="flex-fill text-center py-2"><i class="fa fa-calendar-alt text-primary me-2"></i>{{
+                            package.days }} days</small> -->
+                    </div>
+                    <div class="text-center p-4">
+                        <h3 class="mb-0">{{ package.place }}</h3>
+                        <h3 class="mb-0">₹{{ package.price }}</h3>
+                        <div class="mb-3">
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                        </div>
+                        <p>Book the {{ package.days }} days {{ package.place }} Package. Happy Enjoying!</p>
+                        <div class="d-flex justify-content-center mb-2">
+                            {% if request.user.is_authenticated and request.user.role == "user" %}
+
+                            <a href="{% url 'package_details' package.id %}"
+                                class="btn btn-sm btn-secondary px-3 rounded-pill me-2">View More</a>
+                            <a href="{% url 'payment' package.id %}"
+                                class="btn btn-sm btn-primary px-3 rounded-pill">Book Now</a>
+                            {% else %}
+                            <a href="{% url 'package_details' package.id %}"
+                                class="btn btn-sm btn-secondary px-3 rounded-pill">View More</a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Package End -->
+
+    {% endblock %}

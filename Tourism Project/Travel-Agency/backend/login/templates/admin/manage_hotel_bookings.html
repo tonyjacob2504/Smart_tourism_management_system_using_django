@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Hotel Bookings</h6>
+            <h1 class="mb-5">Manage All Hotel Bookings</h1>
+        </div>
+        <div class="table-responsive shadow-lg rounded-4 overflow-hidden mt-4">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-primary text-white">
+                    <tr class="py-3">
+                        <th class="py-3 ps-4">#</th>
+                        <th>Hotel & Location</th>
+                        <th>Customer</th>
+                        <th>Contact</th>
+                        <th>Stay Period</th>
+                        <th>Rooms</th>
+                        <th>Amount Paid</th>
+                        <th class="pe-4">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white">
+                    {% for b in bookings %}
+                    <tr class="border-bottom">
+                        <td class="ps-4 fw-bold text-muted">{{ forloop.counter }}</td>
+                        <td>
+                            <div class="fw-bold text-dark">{{ b.hotel.name }}</div>
+                            <small class="text-muted"><i class="fa fa-map-marker-alt me-1 text-primary"></i>{{
+                                b.hotel.address|truncatechars:30 }}</small>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ b.user.fullname }}</div>
+                            <small class="text-muted">{{ b.user.email }}</small>
+                        </td>
+                        <td>{{ b.user.phone|default:"N/A" }}</td>
+                        <td>
+                            <div class="small">In: {{ b.check_in_date|date:"d M Y" }}</div>
+                            <div class="small">Out: {{ b.check_out_date|date:"d M Y" }}</div>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge bg-light text-dark border p-2 px-3">{{ b.num_rooms }}</span>
+                        </td>
+                        <td>
+                            <div class="fw-bold text-success">₹{{ b.total_amount }}</div>
+                            <small class="text-xs text-muted">ID: {{ b.payment.id|default:"Cash/Offline" }}</small>
+                        </td>
+                        <td class="pe-4">
+                            <span class="badge bg-success rounded-pill px-3 py-2">
+                                <i class="fa fa-check-circle me-1"></i> {{ b.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <h4>No hotel bookings recorded.</h4>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

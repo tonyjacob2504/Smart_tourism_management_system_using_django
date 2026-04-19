@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-xxl py-5">
+    <div class="container">
+        {% if messages %}
+        <div class="container mt-3 ">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} text-center"
+                style="background-color:rgb(236, 10, 10); color: #fcf9f9; ">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3 ">Payment</h6>
+            <h1 class="mb-5">Select The Date And Pay</h1>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-12 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+                <form id="paymentForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="date" class="form-control" id="date" name="date"
+                                    placeholder="Select the Date for Vacation" required>
+                                <label for="date">Select the Date for Vacation</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="c_name" name="c_name"
+                                    placeholder="Card Name" required>
+                                <label for="c_name">Card Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="c_number" name="c_number"
+                                    placeholder="Card Number" required pattern="[0-9]{16}" minlength="16" maxlength="16"
+                                    title="Please enter a 16-digit card number">
+                                <label for="c_number">Card Number</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="expiry_date" name="expiry_date"
+                                    placeholder="Expiry Date (MM/YY)" required>
+                                <label for="expiry_date">Expiry Date (MM/YY)</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="password" class="form-control" id="cvv" name="cvv" placeholder="CVV"
+                                    required pattern="[0-9]{3}" minlength="3" maxlength="3"
+                                    title="Please enter a 3-digit CVV">
+                                <label for="cvv">CVV</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="guide" name="guide" required>
+                                    <option value="" selected disabled>Choose your Guide</option>
+                                    {% for g in guides %}
+                                    <option value="{{ g.id }}">{{ g.fullname|default:g.email }}</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="guide">Preferred Travel Guide</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <select class="form-select" id="hotel" name="hotel" required>
+                                    <option value="" selected disabled>Choose your Hotel</option>
+                                    {% for h in hotels %}
+                                    <option value="{{ h.id }}">{{ h.name }} ({{ h.room_type }})</option>
+                                    {% endfor %}
+                                </select>
+                                <label for="hotel">Preferred Hotel Stay</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="number" class="form-control" id="persons" name="persons" value="1" min="1"
+                                    required onchange="calculateFinancials()" oninput="calculateFinancials()">
+                                <label for="persons">Number of Persons</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" value="{{ package.price }}"
+                                    id="total_price_display" readonly>
+                                <label>Total Amount (₹)</label>
+                                <input type="hidden" name="total_price" id="total_price_hidden"
+                                    value="{{ package.price }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating border p-3 rounded">
+                                <p class="mb-1 fw-bold text-success">Balance to Pay: ₹<span
+                                        id="advance_paid_display">{{package.price }}</span></p>
+                                <p class="mb-0 text-muted small">Remaining Balance: ₹<span
+                                        id="balance_amount_display">0.00</span></p>
+                                <input type="hidden" name="advance_paid" id="advance_paid_hidden"
+                                    value="{{ package.price }}">
+                                <input type="hidden" name="balance_amount" id="balance_amount_hidden" value="0.00">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <a href="{% url 'user_package' %}" class="btn btn-danger w-100 py-3 mb-3">Cancel</a>
+                            <button type="submit" class="btn btn-primary w-100 py-3" onclick="processPayment()">Pay
+                                Now</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    function calculateFinancials() {
+        let persons = parseFloat(document.getElementById("persons").value) || 1;
+        let basePrice = parseFloat("{{ package.price }}") || 0;
+        let total = persons * basePrice;
+
+        // Assuming 100% payment for now as per current UI flow
+        let advance = total;
+        let balance = 0;
+
+        document.getElementById("total_price_display").value = total.toFixed(2);
+        document.getElementById("total_price_hidden").value = total.toFixed(2);
+
+        document.getElementById("advance_paid_display").innerText = advance.toFixed(2);
+        document.getElementById("advance_paid_hidden").value = advance.toFixed(2);
+
+        document.getElementById("balance_amount_display").innerText = balance.toFixed(2);
+        document.getElementById("balance_amount_hidden").value = balance.toFixed(2);
+    }
+
+    // Run once on load
+    calculateFinancials();
+
+    document.getElementById("paymentForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        Swal.fire({
+            title: "Booking Completed!",
+            text: "Your payment has been successfully processed.",
+            icon: "success",
+            confirmButtonText: "OK"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                event.target.submit(); // Submit the form after clicking OK
+            }
+        });
+    });
+</script>
+
+{% endblock %}
